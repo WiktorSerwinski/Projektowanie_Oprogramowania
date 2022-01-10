@@ -61,14 +61,9 @@ public:
         }
         break;
         case '2': { goto powrot; } break;
-        case '3': { return; } break;
+        case '3': { break; } break;
+        default: { goto powrot; } break;
         }
-    }
-    void zalogowany(int nr_klienta)
-    {
-        cout << "Klient: " << imie << " " << nazwisko << endl;
-
-
     }
 };
 
@@ -95,6 +90,7 @@ void wczytywanie_klient(Klient* obiekt, string miejsce_zapisu)
     int i = 1;
     int i_pom;
     string linia;
+    numer_klienta = 0;
     while (getline(zapis, linia))
     {
         i_pom = (i - 1) * 4;
@@ -257,9 +253,216 @@ void wczytywanie_zamowienie(Zamowienie* obiekt, string miejsce_zapisu)
     zapis.close();
 }
 
+void menu(Klient& klient, Restauracja* restauracja, Menu* menu_restauracji, Zamowienie* zamowienie)
+{
+    int wybor_restauracji;
+    int wybor_z_menu;
+    string wybrane_produkty[11];
+    float koszyk = 0;
+    string produkty;
+wybor:
+    system("cls");
+    cout << "Klient: " << klient.imie << " " << klient.nazwisko << endl;
+    cout << "\nWybierz restauracje z listy: \n";
+    for (int i = 1; i <= numer_restauracji; i++)
+    {
+        cout << i << ". " << restauracja[i].nazwa << endl;
+    }
+    cout << "\nWyloguj (wybierz 0)\nWybor: ";
+    cin >> wybor_restauracji;
+    if (wybor_restauracji == 0) return;
+    system("cls");
+    restauracja[wybor_restauracji].wyswietl();
+    menu_restauracji[wybor_restauracji].wyswietl();
+    for (int j = 1; j < 11; j++)
+    {
+    zly_wybor:
+        cout << "\nWybierz z menu, wroc (wybierz 0) lub wybierz -1 aby zatwierdzic zamowienie -> ";
+        cin >> wybor_z_menu;
+        if (wybor_z_menu == 0) goto wybor;
+        if (wybor_z_menu == -1) break;
+        system("cls");
+        restauracja[wybor_restauracji].wyswietl();
+        menu_restauracji[wybor_restauracji].wyswietl();
+        if (menu_restauracji[wybor_restauracji].nazwa[wybor_z_menu] == "NULL")
+        {
+            cout << "\nBledny wybor!"; Sleep(1000); system("cls"); goto zly_wybor;
+        }
+        wybrane_produkty[j] = menu_restauracji[wybor_restauracji].nazwa[wybor_z_menu];
+        koszyk = menu_restauracji[wybor_restauracji].cena[wybor_z_menu] + koszyk;
+        cout << "\nWybrane produkty: " << j << " (maks. 10)\n";
+
+        for (int p = 1; p < 11; p++)
+        {
+            if (wybrane_produkty[p] == "\0") break;
+            cout << wybrane_produkty[p] << ", ";
+        }
+        cout << "\nLaczna cena: " << koszyk << " zl" << endl;
+        if (j == 10)
+        {
+            cout << "\nMaksymalna liczba produktow!\nWybierz -1 aby zatwierdzic zamowienie lub 0 aby je anulowac -> ";
+            cin >> wybor_z_menu;
+            if (wybor_z_menu == 0) goto wybor;
+            if (wybor_z_menu == -1) break;
+        }
+    }
+    cout << "\nWybierz metode platnosci:\n1. Przelew tradycyjny\n2. Blik\n\n0. Anulowanie\n";
+    switch (_getch())
+    {
+    case '1':
+    {
+        cout << "\nWybrano przelew tradycyjny.\nKwota do zaplaty: " << koszyk << " zl" << endl;
+        Sleep(1000);
+        cout << "\nPlatnosc potwierdzona, zamowienie przyjete!\n";
+        zamowienie[numer_zamowienia + 1].przypisz(klient, restauracja[wybor_restauracji], koszyk);
+        zapisywanie_zamowienie(zamowienie, "Zamowienie.txt");
+        system("pause");
+        goto wybor;
+    }
+    break;
+    case '2':
+    {
+        cout << "\nWybrano platnosc blik.\nKwota do zaplaty: " << koszyk << " zl" << endl;
+        cout << "Wpisz 6-cyfrowy kod blik: ";
+        for (int i = 0; i < 6; i++)
+        {
+            char pom = _getch();
+            if (i < 5) cout << pom << " - ";
+            if (i == 5) cout << pom << endl;
+        }
+        cout << "\nPlatnosc potwierdzona, zamowienie przyjete!\n";
+        zamowienie[numer_zamowienia + 1].przypisz(klient, restauracja[wybor_restauracji], koszyk);
+        zapisywanie_zamowienie(zamowienie, "Zamowienie.txt");
+        system("pause");
+        goto wybor;
+    }
+    break;
+    case '0':
+    {
+        goto wybor;
+    }
+    break;
+    }
+}
+
 int main()
 {
+    Klient* klient = new Klient[30];
+    Restauracja* restauracja = new Restauracja[30];
+    Menu* menu_restauracji = new Menu[30];
+    Zamowienie* zamowienie = new Zamowienie[30];
+    czy_pliki_zapisu_istnieja();
+    wczytywanie_klient(klient, "Klient.txt");
+    wczytywanie_restauracja(restauracja, "Restauracja.txt");
+    wczytywanie_zamowienie(zamowienie, "Zamowienie.txt");
+    wczytywanie_menu(menu_restauracji[1], "1.txt");
+    wczytywanie_menu(menu_restauracji[2], "2.txt");
+    wczytywanie_menu(menu_restauracji[3], "3.txt");
+    wczytywanie_menu(menu_restauracji[4], "4.txt");
+    wczytywanie_menu(menu_restauracji[5], "5.txt");
+    cout << "Zamawianie jedzenia online - Witaj!\n\n";
+    system("pause"); system("cls");
+menu:
+    system("cls");
+    cout << "1. Rejestracja\n2. Logowanie\n3. Logowanie operatora\n";
+    switch (_getch())
+    {
+    case '1':
+    {
+        klient[numer_klienta + 1].Nowy_Klient(klient);
+
+        zapisywanie_klient(klient, "Klient.txt");
+        wczytywanie_klient(klient, "Klient.txt");
+        goto menu;
+    }
+    break;
+
+    case '2':
+    {
+        int nr_klienta_pom; 
+        nr_klienta_pom = nr_klienta(klient);
+        if (nr_klienta_pom == -1) { goto menu; }
+        menu(klient[nr_klienta_pom], restauracja, menu_restauracji, zamowienie);
+        system("cls");
+        goto menu;
+    }
+    break;
+
+    case '3':
+    {
+        string login, haslo;
+        cout << "Wprowadz login: "; cin >> login;
+        cout << "Wprowadz haslo: "; cin >> haslo;
+        if (login != "admin" || haslo != "admin")
+        {
+            cout << "\nBledny login lub haslo!";
+            Sleep(1000);
+            system("cls");
+            goto menu;
+        }
+    admin:
+        system("cls");
+        cout << "1. Wyswietl klientow z bazy\n2. Wyswietl liste restauracji\n3. Wyswietl liste zamowien\n4. Wyloguj\n";
+        switch (_getch())
+        {
+        case '1':
+        {
+            system("cls");
+            for (int i = 1; i <= numer_klienta; i++)
+            {
+                cout << i << ". " << klient[i].imie << "  " << klient[i].nazwisko << endl;
+            }
+            system("pause");
+            goto admin;
+        }
+        break;
+        case '2':
+        {
+            int wyb_rest;
+        lista_restauracji_admin:
+            system("cls");
+            for (int i = 1; i <= numer_restauracji; i++)
+            {
+                cout << i << ". " << restauracja[i].nazwa << endl;
+            }
+            cout << "\n\n0. Wroc\nWybor: ";
+            cin >> wyb_rest;
+            system("cls");
+            if (wyb_rest == 0) goto admin;
+            restauracja[wyb_rest].wyswietl();
+            menu_restauracji[wyb_rest].wyswietl();
+            system("pause");
+            goto lista_restauracji_admin;
+        }
+        break;
+        case '3':
+        {
+            system("cls");
+            for (int i = 1; i <= numer_zamowienia; i++)
+            {
+                zamowienie[i].wyswietl();
+                cout << endl;
+            }
+            system("pause");
+            goto admin;
+        }
+        break;
+        case '4':
+        { goto menu; }
+        break;
+        default:
+        { goto menu; }
+        break;
+        }
+    }
+    break;
+    default:
+    {
+        goto menu;
+    }
+    break;
 
 
-    return 0;
+    }
+
 }
