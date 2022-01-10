@@ -1,0 +1,15 @@
+Pizzeria u Basi
+4,5
+Armii Krajowej 93/6, Krakow
+Mazarino Dostawa & Megalo Burger
+4,2
+Zarzecze 43a, Krakow
+Pyszne Sushi
+4,4
+Lwowska 15, Krakow
+U Szwagra
+3,6
+Gabrieli Zapolskiej 27, Krakow
+Family Bistro
+4,8
+Krolewska 55, Krakow

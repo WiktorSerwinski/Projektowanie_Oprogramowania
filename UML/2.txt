@@ -1,0 +1,14 @@
+Beconburger
+28
+Frytki
+7
+Burger Classic
+25
+Hawaiiburger
+25
+Greekburger
+28
+Eggburger
+28
+Cheeseburger
+26
