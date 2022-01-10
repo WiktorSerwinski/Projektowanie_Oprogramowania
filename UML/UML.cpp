@@ -194,6 +194,69 @@ void wczytywanie_menu(Menu& obiekt, string miejsce_zapisu)
     zapis.close();
 }
 
+class Zamowienie : public Klient, public Restauracja
+{
+public:
+    int numer;
+    float kwota;
+    Klient zamawiajacy;
+    Restauracja restauracja;
+    Zamowienie() { numer = 0; }
+    Zamowienie(Klient zamawiajacy_obj, Restauracja restauracja_obj, float kwota_pom) : zamawiajacy(zamawiajacy_obj), restauracja(restauracja_obj), kwota(kwota_pom)
+    {
+        numer_zamowienia++; numer = numer_zamowienia;
+    }
+    void przypisz(Klient zamawiajacy_obj, Restauracja restauracja_obj, float kwota_pom)
+    {
+        imie = zamawiajacy_obj.imie; nazwa = restauracja_obj.nazwa; kwota = kwota_pom; nazwisko = zamawiajacy_obj.nazwisko;
+        numer_zamowienia++; numer = numer_zamowienia;
+    }
+    void wyswietl()
+    {
+        cout << "\nZamawiajacy: " << imie << " " << nazwisko << endl;
+        cout << "W restauracji: " << nazwa << "\nNa kwote: " << kwota << endl;
+    }
+};
+
+void zapisywanie_zamowienie(Zamowienie* obiekt, string miejsce_zapisu)
+{
+    zapis.open(miejsce_zapisu, ios::ate | ios::out | ios::trunc);
+    if (zapis.good() == false) { cout << "\n\t\tBlad zapisu pliku!!!\n"; Sleep(2000); }
+    for (int i = 1;; i++)
+    {
+        if (obiekt[i].numer == 0) { break; }
+        zapis << obiekt[i].numer << endl;
+        zapis << obiekt[i].imie << endl;
+        zapis << obiekt[i].nazwisko << endl;
+        zapis << obiekt[i].nazwa << endl;
+        zapis << obiekt[i].kwota << endl;
+    }
+    zapis.close();
+}
+
+void wczytywanie_zamowienie(Zamowienie* obiekt, string miejsce_zapisu)
+{
+    zapis.open(miejsce_zapisu, ios::in);
+    if (zapis.good() == false) { cout << "\n\t\tBlad odczytu pliku!!!\n"; Sleep(2000); }
+    int nr_linii = 1;
+    int i = 1;
+    int i_pom;
+    string linia;
+    while (getline(zapis, linia))
+    {
+        i_pom = (i - 1) * 5;
+        if (nr_linii == 1 + i_pom)    obiekt[i].numer = stof(linia);
+        if (nr_linii == 2 + i_pom)    obiekt[i].imie = linia;
+        if (nr_linii == 3 + i_pom)    obiekt[i].nazwisko = linia;
+        if (nr_linii == 4 + i_pom)    obiekt[i].nazwa = linia;
+        if (nr_linii == 5 + i_pom) { obiekt[i].kwota = stof(linia); i++; numer_zamowienia++; }
+
+        nr_linii++;
+    }
+
+    zapis.close();
+}
+
 int main()
 {
 
