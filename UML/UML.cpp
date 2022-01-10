@@ -190,9 +190,10 @@ void wczytywanie_menu(Menu& obiekt, string miejsce_zapisu)
     zapis.close();
 }
 
-class Zamowienie : public Klient, public Restauracja
+class Zamowienie 
 {
 public:
+    string imie, nazwa, nazwisko;
     int numer;
     float kwota;
     Klient zamawiajacy;
