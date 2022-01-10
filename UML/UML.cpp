@@ -67,8 +67,8 @@ public:
     void zalogowany(int nr_klienta)
     {
         cout << "Klient: " << imie << " " << nazwisko << endl;
-        
-        
+
+
     }
 };
 
@@ -101,7 +101,7 @@ void wczytywanie_klient(Klient* obiekt, string miejsce_zapisu)
         if (nr_linii == 1 + i_pom)    obiekt[i].imie = linia;
         if (nr_linii == 2 + i_pom)    obiekt[i].nazwisko = linia;
         if (nr_linii == 3 + i_pom)    obiekt[i].login = linia;
-        if (nr_linii == 4 + i_pom)    {obiekt[i].haslo = linia; i++; numer_klienta++; }
+        if (nr_linii == 4 + i_pom) { obiekt[i].haslo = linia; i++; numer_klienta++; }
 
         nr_linii++;
     }
@@ -109,7 +109,7 @@ void wczytywanie_klient(Klient* obiekt, string miejsce_zapisu)
     zapis.close();
 }
 
-int nr_klienta(Klient* obiekt) 
+int nr_klienta(Klient* obiekt)
 {
     string login, haslo;
     cout << "Wprowadz login: "; cin >> login;
@@ -121,15 +121,82 @@ int nr_klienta(Klient* obiekt)
             cout << "\nLogowanie powiodlo sie!\n"; Sleep(1500); system("cls");
             return i;
         }
-        
+
     }
     cout << "\nLogowanie nie powiodlo sie!\n"; Sleep(1500); system("cls");
     return -1;
 }
 
+class Restauracja
+{
+public:
+    string nazwa, opinia, lokalizacja;
+    Restauracja() :nazwa("NULL") {}
+    void wyswietl()
+    {
+        cout << nazwa << "\nOpinia: " << opinia << "\nLokalizacja: " << lokalizacja << endl << endl;
+    }
+};
+
+void wczytywanie_restauracja(Restauracja* obiekt, string miejsce_zapisu)
+{
+    zapis.open(miejsce_zapisu, ios::in);
+    if (zapis.good() == false) { cout << "\n\t\tBlad odczytu pliku!!!\n"; Sleep(2000); }
+    int nr_linii = 1;
+    int i = 1;
+    int i_pom;
+    string linia;
+    while (getline(zapis, linia))
+    {
+        i_pom = (i - 1) * 3;
+        if (nr_linii == 1 + i_pom)    obiekt[i].nazwa = linia;
+        if (nr_linii == 2 + i_pom)    obiekt[i].opinia = linia;
+        if (nr_linii == 3 + i_pom) { obiekt[i].lokalizacja = linia; i++; numer_restauracji++; }
+
+        nr_linii++;
+    }
+
+    zapis.close();
+}
+
+class Menu
+{
+public:
+    int numer[20];
+    string nazwa[20];
+    float cena[20];
+    Menu() { for (int i = 1; i < 20; i++) { nazwa[i] = "NULL"; } }
+    void wyswietl()
+    {
+        for (int j = 1; nazwa[j] != "NULL"; j++)
+            cout << numer[j] << ". " << nazwa[j] << " - " << cena[j] << " zl" << endl;
+    }
+
+};
+
+void wczytywanie_menu(Menu& obiekt, string miejsce_zapisu)
+{
+    zapis.open(miejsce_zapisu, ios::in);
+    if (zapis.good() == false) { cout << "\n\t\tBlad odczytu pliku!!!\n"; Sleep(2000); }
+    int nr_linii = 1;
+    int i = 1;
+    int i_pom;
+    string linia;
+    while (getline(zapis, linia))
+    {
+        i_pom = (i - 1) * 2;
+        if (nr_linii == 1 + i_pom) { obiekt.numer[i] = i; obiekt.nazwa[i] = linia; }
+        if (nr_linii == 2 + i_pom) { obiekt.cena[i] = stof(linia); i++; }
+
+        nr_linii++;
+    }
+    numer_menu++;
+    zapis.close();
+}
+
 int main()
 {
-   
-            
+
+
     return 0;
 }
