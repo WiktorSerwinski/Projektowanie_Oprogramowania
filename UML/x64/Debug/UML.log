@@ -1,3 +1,3 @@
 ﻿  UML.cpp
-E:\Studia\Wiktor_S3\To Dobre\UML\UML.cpp(234,65): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
+E:\Studia\Wiktor_S3\To Dobre\UML\UML.cpp(229,73): warning C4244: "=": konwersja z "float" do "int", możliwa utrata danych
   UML.vcxproj -> E:\Studia\Wiktor_S3\To Dobre\x64\Debug\UML.exe

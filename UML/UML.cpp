@@ -23,7 +23,7 @@ public:
     {
         cout << "Imie: " << imie << "\nNazwisko: " << nazwisko << "\nLogin: " << login << "\nHaslo: " << haslo;
     }
-    void Nowy_Klient(Klient* klient)
+    void nowy_klient(Klient* klient)//Funkcja tworzy nowy obiekt klient oraz wpisuje go na liste
     {
     powrot:
         system("cls");
@@ -59,7 +59,7 @@ public:
         default: { goto powrot; } break;
         }
     }
-    int nr_klienta(Klient* obiekt)
+    int nr_klienta(Klient* obiekt)// Zwracanie numeru klienta o podanym loginie i hasle
     {
         string login, haslo;
         cout << "Wprowadz login: "; cin >> login;
@@ -110,14 +110,8 @@ public:
     string imie, nazwa, nazwisko;
     int numer;
     float kwota;
-    Klient zamawiajacy;
-    Restauracja restauracja;
     Zamowienie() { numer = 0; }
-    Zamowienie(Klient zamawiajacy_obj, Restauracja restauracja_obj, float kwota_pom) : zamawiajacy(zamawiajacy_obj), restauracja(restauracja_obj), kwota(kwota_pom)
-    {
-        numer_zamowienia++; numer = numer_zamowienia;
-    }
-    void przypisz(Klient zamawiajacy_obj, Restauracja restauracja_obj, float kwota_pom)
+    void przypisz(Klient zamawiajacy_obj, Restauracja restauracja_obj, float kwota_pom)// przypisanie zamowienia do klienta
     {
         imie = zamawiajacy_obj.imie; nazwa = restauracja_obj.nazwa; kwota = kwota_pom; nazwisko = zamawiajacy_obj.nazwisko;
         numer_zamowienia++; numer = numer_zamowienia;
@@ -138,6 +132,7 @@ public:
     fstream zapis;
 
     Baza() { }
+    //Funkcje do obslugi danych z pilkow txt
     void czy_pliki_zapisu_istnieja()
     {
         zapis.open("Restauracja.txt"); if (zapis.good() == false) { zapis.open("Restauracja.txt", ios::out); } zapis.close();
@@ -205,22 +200,22 @@ public:
 
         zapis.close();
     }
-    void zapisywanie_zamowienie(Zamowienie* obiekt, string miejsce_zapisu)
+    void zapisywanie_zamowienie(string miejsce_zapisu)
     {
         zapis.open(miejsce_zapisu, ios::ate | ios::out | ios::trunc);
         if (zapis.good() == false) { cout << "\n\t\tBlad zapisu pliku!!!\n"; Sleep(2000); }
         for (int i = 1;; i++)
         {
-            if (obiekt[i].numer == 0) { break; }
-            zapis << obiekt[i].numer << endl;
-            zapis << obiekt[i].imie << endl;
-            zapis << obiekt[i].nazwisko << endl;
-            zapis << obiekt[i].nazwa << endl;
-            zapis << obiekt[i].kwota << endl;
+            if (lista_zamowien[i].numer == 0) { break; }
+            zapis << lista_zamowien[i].numer << endl;
+            zapis << lista_zamowien[i].imie << endl;
+            zapis << lista_zamowien[i].nazwisko << endl;
+            zapis << lista_zamowien[i].nazwa << endl;
+            zapis << lista_zamowien[i].kwota << endl;
         }
         zapis.close();
     }
-    void wczytywanie_zamowienie(Zamowienie* obiekt, string miejsce_zapisu)
+    void wczytywanie_zamowienie(string miejsce_zapisu)
     {
         zapis.open(miejsce_zapisu, ios::in);
         if (zapis.good() == false) { cout << "\n\t\tBlad odczytu pliku!!!\n"; Sleep(2000); }
@@ -231,11 +226,11 @@ public:
         while (getline(zapis, linia))
         {
             i_pom = (i - 1) * 5;
-            if (nr_linii == 1 + i_pom)    obiekt[i].numer = stof(linia);
-            if (nr_linii == 2 + i_pom)    obiekt[i].imie = linia;
-            if (nr_linii == 3 + i_pom)    obiekt[i].nazwisko = linia;
-            if (nr_linii == 4 + i_pom)    obiekt[i].nazwa = linia;
-            if (nr_linii == 5 + i_pom) { obiekt[i].kwota = stof(linia); i++; numer_zamowienia++; }
+            if (nr_linii == 1 + i_pom)    lista_zamowien[i].numer = stof(linia);
+            if (nr_linii == 2 + i_pom)    lista_zamowien[i].imie = linia;
+            if (nr_linii == 3 + i_pom)    lista_zamowien[i].nazwisko = linia;
+            if (nr_linii == 4 + i_pom)    lista_zamowien[i].nazwa = linia;
+            if (nr_linii == 5 + i_pom) { lista_zamowien[i].kwota = stof(linia); i++; numer_zamowienia++; }
 
             nr_linii++;
         }
@@ -261,7 +256,7 @@ public:
         numer_menu++;
         zapis.close();
     }
-    void menu(Klient& klient, Restauracja* restauracja, Menu* menu_restauracji, Zamowienie* zamowienie)
+    void menu(Klient& klient)//funkcja realizujaca zamowienie
     {
         int wybor_restauracji;
         int wybor_z_menu;
@@ -275,7 +270,7 @@ public:
         cout << "\nWybierz restauracje z listy: \n";
         for (int i = 1; i <= numer_restauracji; i++)
         {
-            cout << i << ". " << restauracja[i].nazwa << endl;
+            cout << i << ". " << lista_restauracji[i].nazwa << endl;
         }
         cout << "\nWyloguj (wybierz 0)\nWybor: ";
         cin >> pom_char;
@@ -286,7 +281,7 @@ public:
         if (wybor_restauracji == 0) return;
 
         system("cls");
-        restauracja[wybor_restauracji].wyswietl();
+        lista_restauracji[wybor_restauracji].wyswietl();
         menu_restauracji[wybor_restauracji].wyswietl();
         for (int j = 1; j < 11; j++)
         {
@@ -299,7 +294,7 @@ public:
             if (wybor_z_menu == 0) goto wybor;
             if (wybor_z_menu == 99) break;
             system("cls");
-            restauracja[wybor_restauracji].wyswietl();
+            lista_restauracji[wybor_restauracji].wyswietl();
             menu_restauracji[wybor_restauracji].wyswietl();
             if (menu_restauracji[wybor_restauracji].nazwa[wybor_z_menu] == "NULL" || wybor_z_menu > 19)
             {
@@ -324,15 +319,15 @@ public:
             }
         }
         cout << "\nWybierz metode platnosci:\n1. Przelew tradycyjny\n2. Blik\n\n0. Anulowanie\n";
-        switch (_getch())
+        switch (_getch()) //Funkcja wyboru metod platnosci
         {
         case '1':
         {
             cout << "\nWybrano przelew tradycyjny.\nKwota do zaplaty: " << koszyk << " zl" << endl;
             Sleep(1000);
             cout << "\nPlatnosc potwierdzona, zamowienie przyjete!\n";
-            zamowienie[numer_zamowienia + 1].przypisz(klient, restauracja[wybor_restauracji], koszyk);
-            zapisywanie_zamowienie(zamowienie, "Zamowienie.txt");
+            lista_zamowien[numer_zamowienia + 1].przypisz(klient, lista_restauracji[wybor_restauracji], koszyk);
+            zapisywanie_zamowienie("Zamowienie.txt");
             system("pause");
             goto wybor;
         }
@@ -348,8 +343,8 @@ public:
                 if (i == 5) cout << pom << endl;
             }
             cout << "\nPlatnosc potwierdzona, zamowienie przyjete!\n";
-            zamowienie[numer_zamowienia + 1].przypisz(klient, restauracja[wybor_restauracji], koszyk);
-            zapisywanie_zamowienie(zamowienie, "Zamowienie.txt");
+            lista_zamowien[numer_zamowienia + 1].przypisz(klient, lista_restauracji[wybor_restauracji], koszyk);
+            zapisywanie_zamowienie("Zamowienie.txt");
             system("pause");
             goto wybor;
         }
@@ -369,7 +364,7 @@ int main()
     B.czy_pliki_zapisu_istnieja();
     B.wczytywanie_klient("Klient.txt");
     B.wczytywanie_restauracja("Restauracja.txt");
-    B.wczytywanie_zamowienie(B.lista_zamowien, "Zamowienie.txt");
+    B.wczytywanie_zamowienie("Zamowienie.txt");
     B.wczytywanie_menu(B.menu_restauracji[1], "1.txt");
     B.wczytywanie_menu(B.menu_restauracji[2], "2.txt");
     B.wczytywanie_menu(B.menu_restauracji[3], "3.txt");
@@ -380,11 +375,11 @@ int main()
 menu:
     system("cls");
     cout << "1. Rejestracja\n2. Logowanie\n3. Logowanie operatora\n";
-    switch (_getch())
+    switch (_getch())//funkcja do poruszania sie po menu programu
     {
     case '1':
     {
-        B.lista_klientow[numer_klienta + 1].Nowy_Klient(B.lista_klientow);
+        B.lista_klientow[numer_klienta + 1].nowy_klient(B.lista_klientow);
         B.zapisywanie_klient("Klient.txt");
         B.wczytywanie_klient("Klient.txt");
         goto menu;
@@ -395,7 +390,7 @@ menu:
     {
         int nr_klienta_pom = B.lista_klientow[1].nr_klienta(B.lista_klientow);
         if (nr_klienta_pom == -1) { goto menu; }
-        B.menu(B.lista_klientow[nr_klienta_pom], B.lista_restauracji, B.menu_restauracji, B.lista_zamowien);
+        B.menu(B.lista_klientow[nr_klienta_pom]);
         system("cls");
         goto menu;
     }
@@ -483,3 +478,5 @@ menu:
 
     }
 }
+
+
